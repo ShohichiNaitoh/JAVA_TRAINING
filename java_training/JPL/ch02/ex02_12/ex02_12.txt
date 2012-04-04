@@ -1,0 +1,2 @@
+Vehicleクラス：特に必要はないと思う
+LinkedListクラス：次のLinkedList要素への参照を可変長引数で渡す方法が考えられる。
