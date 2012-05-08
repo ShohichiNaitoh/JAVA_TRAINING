@@ -1,0 +1,11 @@
+今後、クラスが拡張されたとしても、実装に変更がなさそうな以下のメソッドについてはfinalにしてもいいかと思う。
+
+Vehicleクラス
+ ・getOwner()
+ ・setOwner()
+ ・getSpeed()
+ ・getAngle()
+
+PassengerVehicle
+ ・getNumberOfSeat()
+ ・setNumberOfSeat()

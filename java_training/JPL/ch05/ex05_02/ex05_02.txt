@@ -1,0 +1,5 @@
+Q1 Historyはネストしたクラスにすべきですか？
+A1 HistoryクラスはBankAccountクラスに強く関連したクラスのため、ネストしたクラスにしたほうがいい。
+
+Q2 ネストしたクラスにすべきなら、staticにすべきですか？
+A2 HistoryクラスはBankAccountクラスのインスタンスに結びつくものなので、staticにはしない。
