@@ -13,17 +13,25 @@ public class Clock extends Frame implements Runnable{
 
 	public Clock(){
     	setTitle(title);
-    	setSize(200, 100);
+    	setSize(240, 160);
         setVisible(true);
+        setResizable(false);
         addWindowListener(new WA());
 	}
 
     public void paint(Graphics g){
-    	/*
-    	g.setFont(Font.)
-    	g.setColor(Color.red);
-    	*/
-        g.drawString(hour+":"+minute+":"+second,50,59);
+    	g.setFont(new Font("Serif" , Font.BOLD , 40));
+    	g.setColor(Color.black);
+
+        g.drawString(fillZero(hour)+":"+fillZero(minute)+":"+ fillZero(second) ,40,100);
+    }
+
+    private String fillZero(int i){
+    	if(i < 10){
+    		return "0" + i;
+    	}else{
+    		return "" + i;
+    	}
     }
 
     public void run(){
