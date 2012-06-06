@@ -1,4 +1,4 @@
-package ch10.ex10_01;
+package ch10.ex10_02;
 
 import java.io.BufferedReader;
 import java.io.File;

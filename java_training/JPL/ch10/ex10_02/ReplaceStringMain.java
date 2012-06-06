@@ -3,6 +3,10 @@ package ch10.ex10_02;
 public class ReplaceStringMain {
 
 	public String replace(String str){
+		if(str == null){
+			throw new IllegalArgumentException("str must not be null.");
+		}
+
 		String replacedStr = "";
 		for(int i=0 ; i<str.length() ; i++){
 			switch(str.charAt(i)){
@@ -43,6 +47,6 @@ public class ReplaceStringMain {
 	 */
 	public static void main(String[] args) {
 		ReplaceStringMain replaceString = new ReplaceStringMain();
-		System.out.println(replaceString.replace("aaaa\t \' \""));
+		System.out.println(replaceString.replace("aaaa\t\'\""));
 	}
 }
