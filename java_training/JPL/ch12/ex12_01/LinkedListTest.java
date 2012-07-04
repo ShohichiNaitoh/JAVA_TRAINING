@@ -22,14 +22,22 @@ public class LinkedListTest extends TestCase {
 			linkedList3.find("two");
 		}catch(Exception e){
 			assertTrue(e instanceof ObjectNotFoundException);
-			assertEquals("two not found.", e.getMessage());
+			assertEquals("two is not found.", e.getMessage());
 		}
 
 		try{
 			linkedList4.find("");
 		}catch(Exception e){
 			assertTrue(e instanceof ObjectNotFoundException);
-			assertEquals(" not found.", e.getMessage());
+			assertEquals(" is not found.", e.getMessage());
 		}
+
+		try{
+			linkedList3.find(null);
+		}catch(Exception e){
+			assertTrue(e instanceof IllegalArgumentException);
+			assertEquals("parameter target must not be null.", e.getMessage());
+		}
+
 	}
 }

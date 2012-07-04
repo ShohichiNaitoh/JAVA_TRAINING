@@ -31,6 +31,10 @@ public class LinkedList<E> {
 	}
 
 	public LinkedList<E> find(E target) throws ObjectNotFoundException{
+		if(target == null){
+			throw new IllegalArgumentException("parameter target must not be null.");
+		}
+
 		if(element.equals(target)){
 			return this;
 		}else{
@@ -38,7 +42,7 @@ public class LinkedList<E> {
 				return next.find(target);
 			}
 		}
-		throw new ObjectNotFoundException(target + " not found.");
+		throw new ObjectNotFoundException(target + " is not found.");
 	}
 
 }
