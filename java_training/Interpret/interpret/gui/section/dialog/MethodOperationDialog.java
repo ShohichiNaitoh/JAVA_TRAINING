@@ -1,13 +1,14 @@
-package interpret.gui.dialog;
+package interpret.gui.section.dialog;
 
-import interpret.gui.dialog.FieldOperationDialog.DialogAction;
+import interpret.dispatcher.RequestDispatcher;
+import interpret.gui.section.dialog.FieldOperationDialog.DialogAction;
 import interpret.gui.util.GuiUtility;
-import interpret.logic.RequestDispatcher;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,9 +42,6 @@ public class MethodOperationDialog extends JDialog{
 	private JLabel argLabel = null;
 	private JComboBox argCombBox = null;
 
-
-
-
 	private JButton okButton = new JButton("  Execute  ");
 	private JButton cancelButton = new JButton("  Cancel  ");
 
@@ -55,9 +53,9 @@ public class MethodOperationDialog extends JDialog{
 
 	public MethodOperationDialog(JFrame owner, String[] fieldInfo , RequestDispatcher requestDispatcher){
 		super(owner , DIALOG_TITLE , MODAL);
-		setSize(600 , 200);
 		dim = tk.getScreenSize();
-		setLocation(dim.width / 2 - 200 , dim.height / 2 - 200);
+		setSize(dim.width*2/3 , dim.height*2/3);
+		setLocation(dim.width / 2 - getWidth()/2 , dim.height / 2 - getHeight()/2);
         setResizable(false);
         this.requestDispatcher = requestDispatcher;
 
@@ -71,26 +69,26 @@ public class MethodOperationDialog extends JDialog{
         	};
         };
         fieldTable = new JTable(tableMode);
-        fieldTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        fieldTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         JScrollPane fieldListScrollPanel = new JScrollPane();
 		fieldListScrollPanel.getViewport().setView(fieldTable);
 
 		String[] data = new String[2];
-		data[0] = fieldInfo[0];
-		data[1] = fieldInfo[1];
+		data[0] = fieldInfo[1];
+		data[1] = fieldInfo[2] + " " + fieldInfo[3] + GuiUtility.adjustArgsFormat(fieldInfo[4]);
 		tableMode.addRow(data);
 
 		argLabel = new JLabel(argLabelName);
 		//argCombBox =
 
-        GuiUtility.addComponentByGridBagLayout(this , gridBagLayout , fieldListScrollPanel , 0 , 0 , 6 , 1 , GridBagConstraints.BOTH, GridBagConstraints.CENTER);
-        GuiUtility.addComponentByGridBagLayout(this , gridBagLayout , argLabel , 1 , 1 , 1 , 1 , GridBagConstraints.VERTICAL, GridBagConstraints.CENTER);
+        GuiUtility.addComponentByGridBagLayout(this , gridBagLayout , fieldListScrollPanel , 0 , 0 , 6 , 1 , 1, 1, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(0,0,0,0));
+        GuiUtility.addComponentByGridBagLayout(this , gridBagLayout , argLabel , 1 , 1 , 1 , 1 , 1, 1, GridBagConstraints.VERTICAL, GridBagConstraints.CENTER, new Insets(0,0,0,0));
         //GuiUtility.addComponentByGridBagLayout(this , gridBagLayout , argTextField , 2 , 1 , 2 , 1 , GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST);
-        GuiUtility.addComponentByGridBagLayout(this , gridBagLayout , new JLabel(" ") , 5 , 1 , 1 , 1 , GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST);
-        GuiUtility.addComponentByGridBagLayout(this , gridBagLayout , okButton , 2 , 2 , 1 , 1 , GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER);
-        GuiUtility.addComponentByGridBagLayout(this , gridBagLayout , cancelButton , 3 , 2 , 1 , 1 , GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER);
+        GuiUtility.addComponentByGridBagLayout(this , gridBagLayout , new JLabel(" ") , 5 , 1 , 1 , 1 , 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST, new Insets(0,0,0,0));
+        GuiUtility.addComponentByGridBagLayout(this , gridBagLayout , okButton , 2 , 2 , 1 , 1 , 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER, new Insets(0,0,0,0));
+        GuiUtility.addComponentByGridBagLayout(this , gridBagLayout , cancelButton , 3 , 2 , 1 , 1 , 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER, new Insets(0,0,0,0));
 
-        TitledBorder titleBorder = new TitledBorder(new EtchedBorder(), "Method informatino");
+        TitledBorder titleBorder = new TitledBorder(new EtchedBorder(), "Method information");
         titleBorder.setTitleColor(Color.BLACK);
         fieldListScrollPanel.setBorder(titleBorder);
 

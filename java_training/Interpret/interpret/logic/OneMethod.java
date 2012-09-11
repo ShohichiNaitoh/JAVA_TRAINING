@@ -1,23 +1,27 @@
 package interpret.logic;
 
-import java.lang.reflect.Field;
+import interpret.gui.util.GuiUtility;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 
 public class OneMethod {
 	private Method method = null;
+	public static int NUMBER_OF_INFO_ELEMENT = 5;
+	private int id = -1;
 	private String modifier = "";
-	private String methodReturn = "";
+	private String returnValue = "";
 	private String methodName = "";
 	private String[] methodArgs = null;
+	private boolean flagStatic = false;
 
-	public OneMethod(Method method) throws IllegalAccessException{
+	public OneMethod(int id , Method method) throws IllegalAccessException{
 		this.method = method;
-		modifier = convertModifiers(method.getModifiers());
-		methodReturn = method.getReturnType().toString();
+		this.id = id;
+		modifier = GuiUtility.convertModifiers(method.getModifiers());
+		returnValue = method.getGenericReturnType().toString();
 		methodName = method.getName();
 		Type[] types =  method.getGenericParameterTypes();
 		methodArgs = new String[types.length];
@@ -26,23 +30,44 @@ public class OneMethod {
 		}
 	}
 
-	public String[] getMethodInformation(){
-		String[] str = new String[2];
-		str[0] = modifier;
-		str[1] = methodReturn + " " + methodName + "(";
-		for(int i=0 ; i<methodArgs.length ; i++){
-			if(i != methodArgs.length-1){
-				str[1] += methodArgs[i].toString() + " arg" + i + ", ";
-			}else{
-				str[1] += methodArgs[i].toString() + " arg" + i;
-			}
-		}
-		str[1] += ")";
-		return str;
+	public int getId(){
+		return id;
 	}
 
-	public String[] getMethodArgs(){
-		return methodArgs;
+	public String getModifier(){
+		return modifier;
+	}
+
+	public String getReturnValue(){
+		return returnValue;
+	}
+
+	public String getName(){
+		return methodName + GuiUtility.adjustArgsFormat(GuiUtility.joinArgs(methodArgs));
+	}
+
+	public String[] getInfo(){
+		String[] str = new String[NUMBER_OF_INFO_ELEMENT];
+		str[0] = String.valueOf(id);
+		str[1] = modifier;
+		str[2] = returnValue;
+		str[3] = methodName;
+		str[4] = GuiUtility.joinArgs(methodArgs);
+		/*
+		if(methodArgs != null){
+			str[3] = "";
+			for(int i=0 ; i<methodArgs.length ; i++){
+				if(i != methodArgs.length-1){
+					str[3] += methodArgs[i].toString() +  ",";
+				}else{
+					str[3] += methodArgs[i].toString();
+				}
+			}
+		}else{
+			str[3] = null;
+		}
+		*/
+		return str;
 	}
 
 	public Object execute(Object reflectObject) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException{
@@ -50,43 +75,12 @@ public class OneMethod {
 		return method.invoke(reflectObject);
 	}
 
-
-	private String convertModifiers(int mod){
-		StringBuilder sb = new StringBuilder();
-
-		if(Modifier.isPublic(mod)){
-			sb.append("public ");
-		}else if(Modifier.isProtected(mod)){
-			sb.append("protected ");
-		}else if(Modifier.isPrivate(mod)){
-			sb.append("private ");
+	public boolean isStatic(){
+		if(modifier.contains("static")){
+			return true;
+		}else{
+			return false;
 		}
-
-		if(Modifier.isStatic(mod)){
-			sb.append("static ");
-		}
-
-		if(Modifier.isFinal(mod)){
-			sb.append("final ");
-		}
-
-		if(Modifier.isAbstract(mod)){
-			sb.append("abstract ");
-		}
-
-		if(Modifier.isInterface(mod)){
-			sb.append("interface ");
-		}
-
-		if(Modifier.isSynchronized(mod)){
-			sb.append("synchronized ");
-		}
-
-		if(Modifier.isVolatile(mod)){
-			sb.append("volatile ");
-		}
-
-		return sb.toString();
 	}
 
 }

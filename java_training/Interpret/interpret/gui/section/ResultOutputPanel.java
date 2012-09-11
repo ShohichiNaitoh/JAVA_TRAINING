@@ -1,6 +1,6 @@
 package interpret.gui.section;
+import interpret.dispatcher.RequestDispatcher;
 import interpret.gui.util.GuiUtility;
-import interpret.logic.RequestDispatcher;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -8,6 +8,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Rectangle;
 
 import javax.swing.JLabel;
@@ -30,9 +31,6 @@ public class ResultOutputPanel extends JPanel{
 
 	private static final String sectionName = "Result Section";
 
-	private static final String outputLabelName = "Result";
-	private JLabel outputLabel = null;
-	private JTextArea outputTextArea = null;
 	private JTextPane outputTextPane = null;
 	private JScrollPane scrollPanel = null;
 
@@ -44,15 +42,11 @@ public class ResultOutputPanel extends JPanel{
         GridBagLayout gridBagLayout = new GridBagLayout();
         setLayout(gridBagLayout);
 
-		outputLabel = new JLabel(outputLabelName);
 		outputTextPane = new JTextPane();
 		scrollPanel = new JScrollPane(outputTextPane);
 		scrollPanel.setPreferredSize(new Dimension(500, 150));
 
-		//GuiUtility.addComponentByGridBagLayout(this , gridBagLayout , new JLabel("        ") , 0 , 0 , 1 , 1 , GridBagConstraints.NONE, GridBagConstraints.WEST);
-        //GuiUtility.addComponentByGridBagLayout(this , gridBagLayout , outputLabel , 0 , 0 , 1 , 1 , GridBagConstraints.BOTH, GridBagConstraints.CENTER);
-        GuiUtility.addComponentByGridBagLayout(this , gridBagLayout , scrollPanel , 0 , 0 , 1 , 1 , GridBagConstraints.BOTH, GridBagConstraints.CENTER);
-        //GuiUtility.addComponentByGridBagLayout(this , gridBagLayout , new JLabel("        ") , 3 , 3 , 1 , 1 , GridBagConstraints.NONE, GridBagConstraints.WEST);
+        GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, scrollPanel, 0, 0, 1, 1, 1, 1, GridBagConstraints.BOTH, GridBagConstraints.CENTER , new Insets(0,5,5,5));
 
         TitledBorder titleBorder = new TitledBorder(new EtchedBorder(), sectionName);
         titleBorder.setTitleColor(Color.RED);
@@ -69,7 +63,7 @@ public class ResultOutputPanel extends JPanel{
 	}
 
 	public void ouputMethodResult(String result){
-		String message = "return  ÅF " + result;
+		String message = "return  Ôºö " + result;
 		outputTextPane.setText(message);
 		MutableAttributeSet attr = new SimpleAttributeSet();
 		StyleConstants.setForeground(attr , Color.BLACK);

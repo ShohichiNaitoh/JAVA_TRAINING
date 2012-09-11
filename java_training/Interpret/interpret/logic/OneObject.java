@@ -1,134 +1,298 @@
 package interpret.logic;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 
 
 public class OneObject {
 
+	private Class<?> classFor = null;
 	private Object reflectObject = null;
-	private ArrayList<OneField> fieldList = new ArrayList<OneField>();
-	private ArrayList<OneMethod> methodList = new ArrayList<OneMethod>();
-	private int selectedFieldIndex = -1;
-	private int selectedMethodIndex = -1;
 
+	private TreeMap<String,OneField> fieldMap = new TreeMap<String,OneField>();
+	private TreeMap<String,OneConstructor> constructorMap = new TreeMap<String,OneConstructor>();
+	private TreeMap<String,OneMethod> methodMap = new TreeMap<String,OneMethod>();
+	private int selectedFieldId = -1;
+	private int selectedMethodId = -1;
 
-	public OneObject(Object reflectObject) throws IllegalAccessException{
+	private int memberId = 0;
+
+	public OneObject(String className) throws IllegalAccessException, ClassNotFoundException{
+		memberId = 0;
+		classFor = Class.forName(className);
+		listupStaticMember();
+	}
+
+	public OneObject(String className , Object reflectObject) throws IllegalAccessException, ClassNotFoundException{
+		memberId = 0;
+		classFor = Class.forName(className);
 		this.reflectObject = reflectObject;
-		searchField();
-		searchMethod();
+		listupStaticMember();
 	}
 
-	private void searchField() throws IllegalAccessException{
-		fieldList.clear();
-		searchFieldRecursive(reflectObject.getClass());
+	public void setSelectedFieldId(int id){
+		this.selectedFieldId = id;
 	}
 
-	private void searchMethod() throws IllegalAccessException{
-		methodList.clear();
-		searchMethodRecursive(reflectObject.getClass());
+	public void setSelectedMethodId(int id){
+		this.selectedMethodId = id;
 	}
 
-	public String getObjectTypeName(){
-		return (reflectObject.getClass()).getName();
+	public String[] getSelectedFieldInfo(){
+		return getFieldInfoById(selectedFieldId);
 	}
 
-	public void setSelectedFieldIndex(int fieldIndex){
-		this.selectedFieldIndex = fieldIndex;
+	public String[] getSelectedMethodInfo(){
+		return getMethodInfoById(selectedMethodId);
 	}
 
-	public void setSelectedMethodIndex(int methodIndex){
-		this.selectedMethodIndex = methodIndex;
-	}
-
-	public String[] getSelectedField(){
-		return getFieldByIndex(selectedFieldIndex);
-	}
-
-	public String[] getSelectedMethod(){
-		return getMethodByIndex(selectedMethodIndex);
-	}
-
-	public String[][] getAllField(){
-		String[][] fieldsInfo = new String[fieldList.size()][4];
-		for(int i=0 ; i<fieldList.size() ; i++){
-			fieldsInfo[i] = fieldList.get(i).getFieldInformation();
+	public String[][] getConstructorInfo(){
+		String[][] constructorInfo = new String[constructorMap.size()][OneConstructor.NUMBER_OF_INFO_ELEMENT];
+		int i=0;
+		for(Map.Entry<String, OneConstructor> e : constructorMap.entrySet()){
+			constructorInfo[i++] = e.getValue().getInfo();
 		}
-		return fieldsInfo;
+		return constructorInfo;
 	}
 
-	public String[][] getAllMethod(){
-		String[][] methodsInfo = new String[methodList.size()][2];
-		for(int i=0 ; i<methodList.size() ; i++){
-			methodsInfo[i] = methodList.get(i).getMethodInformation();
+	public String[][] getAllFieldInfo(){
+		String[][] fieldInfo = new String[fieldMap.size()][OneField.NUMBER_OF_INFO_ELEMENT];
+		int i=0;
+		for(Map.Entry<String, OneField> e : fieldMap.entrySet()){
+			fieldInfo[i++] = e.getValue().getInfo();
 		}
-		return methodsInfo;
+		return fieldInfo;
 	}
 
-	public String[] getFieldByIndex(int index){
-		return fieldList.get(index).getFieldInformation();
+	public String[][] getAllMethodInfo(){
+		String[][] methodInfo = new String[methodMap.size()][OneMethod.NUMBER_OF_INFO_ELEMENT];
+		int i=0;
+		for(Map.Entry<String, OneMethod> e : methodMap.entrySet()){
+			methodInfo[i++] = e.getValue().getInfo();
+		}
+		return methodInfo;
 	}
 
-	public String[] getMethodByIndex(int index){
-		return methodList.get(index).getMethodInformation();
+	public String[][] getConstructorContainedKeywords(String[] keywords){
+		int numberHit = 0;
+ 		for(Map.Entry<String, OneConstructor> e : constructorMap.entrySet()){
+ 			OneConstructor targetConstructor = e.getValue();
+ 			String target = targetConstructor.getModifier() + " " + targetConstructor.getName();
+ 			if(containKeywords(target , keywords)){
+ 	 			numberHit++;
+ 			}
+ 		}
+ 		int i=0;
+ 		String[][] hitConstructorInfo = new String[numberHit][OneConstructor.NUMBER_OF_INFO_ELEMENT];
+ 		for(Map.Entry<String, OneConstructor> e : constructorMap.entrySet()){
+ 			OneConstructor targetConstructor = e.getValue();
+ 			String target = targetConstructor.getModifier() + " " + targetConstructor.getName();
+ 			if(containKeywords(target , keywords)){
+ 				hitConstructorInfo[i++] = e.getValue().getInfo();
+ 			}
+ 		}
+ 		return hitConstructorInfo;
+	}
+
+	public String[][] getFieldInfoContainedKeywords(String[] keywords){
+		int numberHit = 0;
+ 		for(Map.Entry<String, OneField> e : fieldMap.entrySet()){
+ 			OneField targetField = e.getValue();
+ 			String target = targetField.getModifier() + " " + targetField.getType() + " " + targetField.getName();
+ 			if(containKeywords(target , keywords)){
+ 	 			numberHit++;
+ 			}
+ 		}
+ 		int i=0;
+ 		String[][] hitFieldInfo = new String[numberHit][OneField.NUMBER_OF_INFO_ELEMENT];
+ 		for(Map.Entry<String, OneField> e : fieldMap.entrySet()){
+ 			OneField targetField = e.getValue();
+ 			String target = targetField.getModifier() + " " + targetField.getType() + " " + targetField.getName();
+ 			if(containKeywords(target , keywords)){
+		 		hitFieldInfo[i++] = e.getValue().getInfo();
+ 			}
+ 		}
+ 		return hitFieldInfo;
+	}
+
+	public String[][] getMethodInfoContainedKeywords(String[] keywords){
+		int numberHit = 0;
+ 		for(Map.Entry<String, OneMethod> e : methodMap.entrySet()){
+ 			OneMethod targetMethod = e.getValue();
+ 			String target = targetMethod.getModifier() + " " + targetMethod.getReturnValue() + " " + targetMethod.getName();
+ 			if(containKeywords(target , keywords)){
+ 				numberHit++;
+ 			}
+ 		}
+ 		int i=0;
+ 		String[][] hitMethodInfo = new String[numberHit][OneMethod.NUMBER_OF_INFO_ELEMENT];
+ 		for(Map.Entry<String, OneMethod> e : methodMap.entrySet()){
+ 			OneMethod targetMethod = e.getValue();
+ 			String target = targetMethod.getModifier() + " " + targetMethod.getReturnValue() + " " + targetMethod.getName();
+ 			if(containKeywords(target , keywords)){
+ 				hitMethodInfo[i++] = e.getValue().getInfo();
+ 			}
+ 		}
+ 		return hitMethodInfo;
+	}
+
+	private boolean containKeywords(String target , String[] keywords){
+		for(int i=0 ; i<keywords.length ; i++){
+			if(keywords[i].length() == 0){
+				continue;
+			}
+ 			if(!target.toLowerCase().contains(keywords[i].toLowerCase())){
+ 	 			return false;
+ 			}
+		}
+		return true;
+	}
+
+	public String getInstanceInfo(){
+		if(reflectObject == null){
+			return "null";
+		}else{
+			return "";
+		}
+	}
+
+	private String[] getFieldInfoById(int id){
+		for(Map.Entry<String, OneField> e : fieldMap.entrySet()){
+			if(e.getValue().getId() == id){
+				return e.getValue().getInfo();
+			}
+		}
+		return null;
+	}
+
+	private String[] getMethodInfoById(int id){
+		for(Map.Entry<String, OneConstructor> e : constructorMap.entrySet()){
+			if(e.getValue().getId() == id){
+				return e.getValue().getInfo();
+			}
+		}
+		for(Map.Entry<String, OneMethod> e : methodMap.entrySet()){
+			if(e.getValue().getId() == id){
+				return e.getValue().getInfo();
+			}
+		}
+		return null;
 	}
 
 	public void rewriteSelectedField(String value) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException{
-		fieldList.get(selectedFieldIndex).rewriteValue(reflectObject , value);
-		searchField();
+		fieldMap.get(selectedFieldId).rewriteValue(reflectObject , value);
+		if(reflectObject == null){
+			listupStaticFields();
+		}else{
+			listupAllFields();
+		}
 	}
 
 	public Object executeSelectedMethod() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException{
-		return methodList.get(selectedMethodIndex).execute(reflectObject);
+		return methodMap.get(selectedMethodId).execute(reflectObject);
 	}
 
-	private void searchFieldRecursive(Type type) throws IllegalAccessException{
+	private void listupConstructors() throws IllegalAccessException{
+		constructorMap.clear();
+		constructorMap.put("" , new OneConstructor(memberId++ , null));
+		Constructor[] declaredConstructors = classFor.getDeclaredConstructors();
+		for(Constructor constructor : declaredConstructors){
+			OneConstructor oneConstructor = new OneConstructor(memberId++ , constructor);
+			if(constructorMap.get(oneConstructor.getName()) == null){
+				constructorMap.put(oneConstructor.getName() , oneConstructor);
+			}
+		}
+	}
+
+	private void listupStaticMember() throws IllegalAccessException{
+		memberId = 0;
+		listupConstructors();
+		listupStaticFields();
+		listupStaticMethods();
+	}
+
+	private void listupAllMember() throws IllegalAccessException{
+		memberId = 0;
+		listupConstructors();
+		listupAllFields();
+		listupAllMethods();
+	}
+
+	private void listupStaticFields() throws IllegalAccessException{
+		fieldMap.clear();
+		listupFieldsRecursive(classFor , true);
+	}
+
+	private void listupStaticMethods() throws IllegalAccessException{
+		methodMap.clear();
+		listupMethodsRecursive(classFor , true);
+	}
+
+	private void listupAllFields() throws IllegalAccessException{
+		fieldMap.clear();
+		listupFieldsRecursive(classFor , false);
+	}
+
+	private void listupAllMethods() throws IllegalAccessException{
+		methodMap.clear();
+		listupMethodsRecursive(classFor , false);
+	}
+
+	private void listupFieldsRecursive(Type type , boolean restrictStaticField) throws IllegalAccessException{
 		Class<?> cls = null;
 		if(type instanceof Class<?>){
 			cls = (Class<?>) type;
 			Field[] declaredFields = cls.getDeclaredFields();
 			for(Field field : declaredFields){
-				fieldList.add(new OneField(reflectObject, field));
+				OneField oneField = new OneField(memberId++ , reflectObject, field);
+				if(restrictStaticField){
+					if(!oneField.isStatic()){
+						continue;
+					}
+				}
+				if(fieldMap.get(oneField.getName()) == null){
+					fieldMap.put(oneField.getName() , oneField);
+				}
 			}
-			/*
-			Field[] fields = cls.getFields();
-			for(Field field : fields){
-				fieldList.add(new OneField(reflectObject, field));
-			}
-			*/
 
 			Type superType = cls.getGenericSuperclass();
 			if(superType == null){
 				return;
 			}
-			searchFieldRecursive(superType);
+			listupFieldsRecursive(superType , restrictStaticField);
 		}
 	}
 
-	private void searchMethodRecursive(Type type) throws IllegalAccessException{
+	private void listupMethodsRecursive(Type type , boolean restrictStaticMethod) throws IllegalAccessException{
 		Class<?> cls = null;
 		if(type instanceof Class<?>){
 			cls = (Class<?>) type;
 			Method[] declaredMethods = cls.getDeclaredMethods();
 			for(Method method : declaredMethods){
-				methodList.add(new OneMethod(method));
+				OneMethod oneMethod = new OneMethod(memberId++ , method);
+				if(restrictStaticMethod){
+					if(!oneMethod.isStatic()){
+						continue;
+					}
+				}
+				if(methodMap.get(oneMethod.getName()) == null){
+					methodMap.put(/*String.valueOf(ggg++)*/oneMethod.getName() , oneMethod);
+				}
 			}
-			/*
-			Method[] methods = cls.getMethods();
-			for(Method method : methods){
-				methodList(new OneMethod(method));
-			}
-			*/
 
 			Type superType = cls.getGenericSuperclass();
 			if(superType == null){
 				return;
 			}
-			searchMethodRecursive(superType);
+			listupMethodsRecursive(superType , restrictStaticMethod);
 		}
 	}
 

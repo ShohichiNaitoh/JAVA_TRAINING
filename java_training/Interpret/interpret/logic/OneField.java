@@ -1,23 +1,54 @@
 package interpret.logic;
 
+import interpret.gui.util.GuiUtility;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 
 public class OneField {
 	private Field field = null;
+	public static int NUMBER_OF_INFO_ELEMENT = 5;
+	private int id = -1;
 	private String modifier = "";
 	private String type = "";
 	private String name = "";
 	private Object value = "";
 
-
-	public OneField(Object reflectObject , Field field) throws IllegalAccessException{
+	public OneField(int id , Object reflectObject , Field field) throws IllegalAccessException{
 		this.field = field;
-		modifier = convertModifiers(field.getModifiers());
-		type = field.getType().toString();
+		this.id = id;
+		modifier = GuiUtility.convertModifiers(field.getModifiers());
+		Type t = field.getGenericType();
+		/*
+		if(t instanceof ParameterizedType ){
+			Type[] g = ((ParameterizedType) t).getActualTypeArguments();
+			if(g[0] instanceof WildcardType){
+				(WildcardType g[0]).
+			}
+		}
+		*/
+		type = field.getGenericType().toString();
+		/*
+		TypeVariable[] b = field.getType().getTypeParameters();
+		System.out.println(type);
+		for(int i=0 ; i<b.length ; i++){
+			Type[] c = b[i].getBounds();
+			for(int j=0 ; j<c.length ; j++){
+				System.out.println(c[j]);
+			}
+		}
+		System.out.println();
+		*/
 		name = field.getName();
 		try {
 			field.setAccessible(true);
+			if(!isStatic() && (reflectObject == null)){
+				return;
+			}
 			value = field.get(reflectObject);
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
@@ -28,15 +59,32 @@ public class OneField {
 		}
 	}
 
-	public String[] getFieldInformation(){
-		String[] fieldInfo = new String[4];
-		fieldInfo[0] = modifier;
-		fieldInfo[1] = type;
-		fieldInfo[2] = name;
+	public int getId(){
+		return id;
+	}
+
+	public String getModifier(){
+		return modifier;
+	}
+
+	public String getType(){
+		return type;
+	}
+
+	public String getName(){
+		return name;
+	}
+
+	public String[] getInfo(){
+		String[] fieldInfo = new String[NUMBER_OF_INFO_ELEMENT];
+		fieldInfo[0] = String.valueOf(id);
+		fieldInfo[1] = modifier;
+		fieldInfo[2] = type;
+		fieldInfo[3] = name;
 		if(value == null){
-			fieldInfo[3] = "null";
+			fieldInfo[4] = "null";
 		}else{
-			fieldInfo[3] = value.toString();
+			fieldInfo[4] = value.toString();
 		}
 		return fieldInfo;
 	}
@@ -62,41 +110,12 @@ public class OneField {
 		}
 	}
 
-	private String convertModifiers(int mod){
-		StringBuilder sb = new StringBuilder();
-
-		if(Modifier.isPublic(mod)){
-			sb.append("public ");
-		}else if(Modifier.isProtected(mod)){
-			sb.append("protected ");
-		}else if(Modifier.isPrivate(mod)){
-			sb.append("private ");
+	public boolean isStatic(){
+		if(modifier.contains("static")){
+			return true;
+		}else{
+			return false;
 		}
-
-		if(Modifier.isStatic(mod)){
-			sb.append("static ");
-		}
-
-		if(Modifier.isFinal(mod)){
-			sb.append("final ");
-		}
-
-		if(Modifier.isAbstract(mod)){
-			sb.append("abstract ");
-		}
-
-		if(Modifier.isInterface(mod)){
-			sb.append("interface ");
-		}
-
-		if(Modifier.isSynchronized(mod)){
-			sb.append("synchronized ");
-		}
-
-		if(Modifier.isVolatile(mod)){
-			sb.append("volatile ");
-		}
-
-		return sb.toString();
 	}
+
 }
