@@ -6,7 +6,7 @@ import interpret.gui.section.MethodInfoPanel;
 import interpret.gui.section.ResultOutputPanel;
 import interpret.gui.section.UserInputPanel;
 import interpret.gui.section.VariableInfoPanel;
-import interpret.gui.util.GuiUtility;
+import interpret.util.GuiUtil;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -36,10 +36,15 @@ public class ObjectPanel extends JPanel {
 
 		GridBagLayout gridBagLayout = new GridBagLayout();
         setLayout(gridBagLayout);
-        GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, userInputPanel, 0, 0, 3, 1, 1, 0.1, GridBagConstraints.VERTICAL, GridBagConstraints.CENTER, new Insets(0,0,0,0));
-        GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, variableInfoPanel, 0, 1, 1, 1, 0.5, 1, GridBagConstraints.BOTH, GridBagConstraints.WEST , new Insets(5,0,5,5));
-        GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, fieldInfoPanel, 1, 1, 1, 1, 1, 1, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5));
-        GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, methodInfoPanel, 2, 1, 1, 1, 1, 1, GridBagConstraints.BOTH, GridBagConstraints.EAST, new Insets(5,5,5,0));
-        GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, resultOutputPanel, 0, 2, 3, 1, 1, 0.5, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(0,0,0,0));
+        GuiUtil.addComponentByGridBagLayout(this, gridBagLayout, userInputPanel, 0, 0, 3, 1, 1, 0.1, GridBagConstraints.VERTICAL, GridBagConstraints.CENTER, new Insets(0,0,0,0));
+        GuiUtil.addComponentByGridBagLayout(this, gridBagLayout, variableInfoPanel, 0, 1, 1, 1, 0.5, 1, GridBagConstraints.BOTH, GridBagConstraints.WEST , new Insets(5,0,5,5));
+        GuiUtil.addComponentByGridBagLayout(this, gridBagLayout, fieldInfoPanel, 1, 1, 1, 1, 1, 1, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5));
+        GuiUtil.addComponentByGridBagLayout(this, gridBagLayout, methodInfoPanel, 2, 1, 1, 1, 1, 1, GridBagConstraints.BOTH, GridBagConstraints.EAST, new Insets(5,5,5,0));
+        GuiUtil.addComponentByGridBagLayout(this, gridBagLayout, resultOutputPanel, 0, 2, 3, 1, 1, 0.5, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(0,0,0,0));
+	}
+
+	public void closePanel(){
+		requestDispatcher.removeRequestDispatcerFromList();
+		requestDispatcher = null;
 	}
 }

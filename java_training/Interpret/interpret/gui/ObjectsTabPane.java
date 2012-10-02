@@ -70,6 +70,8 @@ public class ObjectsTabPane extends JTabbedPane {
 				return ;
 			}
 			owner.remove(index);
+			objectPanelList.get(index).closePanel();
+			objectPanelList.remove(index);
 			currentLastIndexNumber--;
 			if(getSelectedIndex() == currentLastIndexNumber){
 				setSelectedIndex(currentLastIndexNumber-1);

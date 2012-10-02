@@ -6,7 +6,7 @@ import java.io.Reader;
 
 public class BufferedLineReader extends FilterReader {
 
-	protected BufferedLineReader(Reader in) {
+	public BufferedLineReader(Reader in) {
 		super(in);
 	}
 
@@ -18,10 +18,10 @@ public class BufferedLineReader extends FilterReader {
 		StringBuffer sb = new StringBuffer();
 		int c;
 		while((c = super.read()) != -1){
-			if(c == '\n' || c == '\r'){
+			if(c == '\n' || c == '\r' ){
 				return sb.toString();
 			}else{
-				sb.append(c);
+				sb.append((char)c);
 			}
 		}
 		return null;

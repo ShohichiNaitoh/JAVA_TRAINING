@@ -42,6 +42,9 @@ public class RequestDispatcher {
 			}else if(variableType == variableType.ARRAY){
 				variable = new Variable(size , variableName , className);
 			}
+			if(!validateVariableName(variableName)){
+				throw new IllegalArgumentException("The name of variable is already used.");
+			}
 			variableInfoPanel.updateVariableInfo(variable.getVariableInfo() , 0);
 			pushedVariableInfoList(0);
 		} catch (Exception e) {
@@ -68,10 +71,12 @@ public class RequestDispatcher {
 
 	public void clickedFieldInfoList(){
 		methodInfoPanel.selectExclusive();
+		resultOutputPanel.reset();
 	}
 
 	public void clickedMethodInfoList(){
 		fieldInfoPanel.selectExclusive();
+		resultOutputPanel.reset();
 	}
 
 	public void doubleClickedFieldInfoList(int id){
@@ -111,10 +116,9 @@ public class RequestDispatcher {
 
 	public void pushedFieldInfoDialog(String value){
 		try {
-			/*
-			objectSet.getCurrentObject().rewriteSelectedField(value);
-			fieldInfoPanel.updateFieldInfo(objectSet.getCurrentObjectFieldInformation());
-			*/
+			variable.getCurrentObject().rewriteSelectedField(value);
+			searchFieldInfoList(fieldInfoPanel.getKeywords());
+			searchMethodInfoList(methodInfoPanel.getKeywords());
 		} catch (Exception e) {
 			e.printStackTrace();
 			allReset();
@@ -122,13 +126,16 @@ public class RequestDispatcher {
 		}
 	}
 
-	public void pushedMethodInfoDialog(){
+	public void pushedMethodInfoDialog(String[] argsValue){
 		try{
-			/*
-			Object result = objectSet.getCurrentObject().executeSelectedMethod();
-			resultOutputPanel.ouputMethodResult(result.toString());
-			*/
-		} catch (Exception e){
+			Object result = variable.getCurrentObject().executeSelectedMethod(argsValue);
+			variableInfoPanel.updateVariableInfo(variable.getVariableInfo());
+			searchFieldInfoList(fieldInfoPanel.getKeywords());
+			searchMethodInfoList(methodInfoPanel.getKeywords());
+			if(result != null){
+				resultOutputPanel.ouputMethodResult(result.toString());
+			}
+		} catch (Throwable e) {
 			e.printStackTrace();
 			allReset();
 			resultOutputPanel.outputException(convertStackTraceToString(e));
@@ -147,6 +154,67 @@ public class RequestDispatcher {
 			return 0;
 		}
 		return variable.getCurrentObject().getConstructorInfo().length + variable.getCurrentObject().getAllMethodInfo().length;
+	}
+
+	public Variable getVariable(){
+		return variable;
+	}
+
+	public void removeRequestDispatcerFromList(){
+		dispatcherList.remove(this);
+		if(variable != null){
+			variable.terminal();
+		}
+		variable = null;
+	}
+
+	public boolean validateVariableName(String variableName){
+		for(RequestDispatcher requestDispatcher : dispatcherList){
+			if(requestDispatcher != this){
+				if(requestDispatcher.getVariable() == null){
+					continue;
+				}
+				if(variableName.equals(requestDispatcher.getVariable().getVariableName())){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	public static Object getInstanceByVariableName(String variableName){
+		for(RequestDispatcher requestDispatcher : dispatcherList){
+			if(requestDispatcher.getVariable() == null){
+				continue;
+			}
+			if(variableName.equals(requestDispatcher.getVariable().getVariableName())){
+				return requestDispatcher.getVariable().getReflectObject();
+			}
+		}
+		return null;
+	}
+
+	public String[] getVariableNamesMatchClassType(String classType){
+		ArrayList<String> variableNames = new ArrayList<String>();
+		for(RequestDispatcher requestDispatcher : dispatcherList){
+			if(requestDispatcher != this){
+				if(requestDispatcher.getVariable() == null){
+					continue;
+				}
+				if(requestDispatcher.getVariable().isClassType(classType)){
+					variableNames.add(requestDispatcher.getVariable().getVariableName());
+				}
+			}
+		}
+		String[] str = new String[variableNames.size()];
+		for(int i=0 ; i<str.length ; i++){
+			str[i] = variableNames.get(i);
+		}
+		return str;
+	}
+
+	public void outputReset(){
+		resultOutputPanel.reset();
 	}
 
 	private void allReset(){

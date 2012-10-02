@@ -1,7 +1,8 @@
 package interpret.gui.section;
 import interpret.dispatcher.RequestDispatcher;
 import interpret.gui.section.MethodInfoPanel.MethodInfoAction;
-import interpret.gui.util.GuiUtility;
+import interpret.util.GuiUtil;
+import interpret.util.ReflectionUtil;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -82,10 +83,10 @@ public class FieldInfoPanel extends JPanel {
         fieldListScrollPanel = new JScrollPane();
 		fieldListScrollPanel.getViewport().setView(fieldTable);
 
-        GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, searchLabel, 0, 0, 1, 1, 0.1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER, new Insets(0,15,5,5));
-        GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, searchTextField, 1, 0, 1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER, new Insets(0,-20,5,0));
-        GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, resetButton, 2, 0, 1, 1, 0.2, 0, GridBagConstraints.NONE, GridBagConstraints.CENTER, new Insets(0,0,5,-15));
-		GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, fieldListScrollPanel, 0, 1, 3, 1, 1, 1, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5));
+        GuiUtil.addComponentByGridBagLayout(this, gridBagLayout, searchLabel, 0, 0, 1, 1, 0.1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER, new Insets(0,15,5,5));
+        GuiUtil.addComponentByGridBagLayout(this, gridBagLayout, searchTextField, 1, 0, 1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER, new Insets(0,-20,5,0));
+        GuiUtil.addComponentByGridBagLayout(this, gridBagLayout, resetButton, 2, 0, 1, 1, 0.2, 0, GridBagConstraints.NONE, GridBagConstraints.CENTER, new Insets(0,0,5,-15));
+		GuiUtil.addComponentByGridBagLayout(this, gridBagLayout, fieldListScrollPanel, 0, 1, 3, 1, 1, 1, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5));
 
         TitledBorder titleBorder = new TitledBorder(new EtchedBorder(), sectionName);
         titleBorder.setTitleColor(Color.DARK_GRAY);
@@ -100,7 +101,7 @@ public class FieldInfoPanel extends JPanel {
 		for(int i=0 ; i<fieldInfo.length ; i++){
 			String[] str = new String[columnNames.length];
 			str[0] = fieldInfo[i][1];
-			str[1] = fieldInfo[i][2];
+			str[1] = ReflectionUtil.getSimpleName(fieldInfo[i][2]);
 			str[2] = fieldInfo[i][3];
 			str[3] = fieldInfo[i][4];
 			tableMode.addRow(str);
@@ -141,6 +142,10 @@ public class FieldInfoPanel extends JPanel {
 		}
 	}
 
+	public String[] getKeywords(){
+		return searchTextField.getText().split(" ");
+	}
+
 	class FieldInfoAction extends MouseAdapter implements ListSelectionListener , KeyListener , ActionListener{
 		@Override
 		public void valueChanged(ListSelectionEvent e) {
@@ -161,6 +166,7 @@ public class FieldInfoPanel extends JPanel {
 		@Override
 		public void keyTyped(KeyEvent e) {
 			updateSearchResult();
+			requestDispatcher.outputReset();
 		}
 
 		@Override

@@ -1,27 +1,15 @@
-package interpret.gui.util;
+package interpret.util;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.lang.reflect.Modifier;
 
-public class GuiUtility {
+public class ReflectionUtil {
 
-	public static void addComponentByGridBagLayout(Container container , GridBagLayout layout ,Component comp , int x , int y , int gridwidth , int gridheight , double weightx , double weighty , int fill , int anchor , Insets insets){
-		GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = x;
-        gbc.gridy = y;
-        gbc.gridwidth = gridwidth;
-        gbc.gridheight = gridheight;
-        gbc.weightx = weightx;
-        gbc.weighty=weighty;
-        gbc.fill = fill;
-        gbc.anchor = anchor;
-        gbc.insets = insets;
-        layout.setConstraints(comp, gbc);
-        container.add(comp);
+	public static String getSimpleName(String canonicalName){
+		int index = canonicalName.lastIndexOf(".");
+		if(index != -1){
+			return  canonicalName.substring(index + 1);
+		}
+		return canonicalName;
 	}
 
 	public static String joinArgs(String[] args){
@@ -40,14 +28,14 @@ public class GuiUtility {
 		}
 	}
 
-	public static String adjustArgsFormat(String joinedArg){
+	public static String adjustArgsFormatBySimpleName(String joinedArg){
 		StringBuffer sb = new StringBuffer();
 		if(joinedArg != null){
 			sb.append(" ( ");
 			if(joinedArg.length() != 0){
 				String[] args = joinedArg.split(",");
 				for(int i=0 ; i<args.length ; i++){
-					sb.append(GuiUtility.getSimpleName(args[i]));
+					sb.append(ReflectionUtil.getSimpleName(args[i]));
 					if(i != args.length-1){
 						sb.append(" arg" + (i+1) + " , ");
 					}else{
@@ -60,12 +48,20 @@ public class GuiUtility {
 		return sb.toString();
 	}
 
-	public static String getSimpleName(String canonicalName){
-		int index = canonicalName.lastIndexOf(".");
-		if(index != -1){
-			return  canonicalName.substring(index + 1);
+	public static String joinExceptions(String[] exceptions){
+		StringBuffer sb = new StringBuffer();
+		if(exceptions != null){
+			for(int i=0 ; i<exceptions.length ; i++){
+				if(i != exceptions.length-1){
+					sb.append(exceptions[i].toString() +  ",");
+				}else{
+					sb.append(exceptions[i].toString());
+				}
+			}
+			return sb.toString();
+		}else{
+			return null;
 		}
-		return canonicalName;
 	}
 
 	public static String convertModifiers(int mod){

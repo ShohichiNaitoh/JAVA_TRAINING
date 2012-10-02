@@ -30,6 +30,59 @@ public class Variable {
 		objectSet = new ObjectSet(className , size);
 	}
 
+	public String getVariableName(){
+		return variableName;
+	}
+
+	public boolean isClassType(String classType){
+		/*
+		return true;
+		*/
+		String targetClassName = null;
+		int startIndex = -1;
+		int endIndex = -1;
+		if(classType.indexOf("[") != -1){
+			if(variableType != VariableType.ARRAY){
+				return false;
+			}
+			if(classType.indexOf("L") != -1){
+				startIndex = classType.indexOf("L");
+				if(classType.indexOf(";") != -1){
+					endIndex = classType.indexOf(";") -1;
+				}else{
+					endIndex = classType.length() - 1;
+				}
+			}else{
+				startIndex = classType.lastIndexOf(" ");
+				endIndex = classType.length() - 1;
+			}
+		}else{
+			if(variableType != VariableType.NOT_ARRAY){
+				return false;
+			}
+			if(classType.indexOf("L") != -1){
+				startIndex = classType.indexOf("L");
+				if(classType.indexOf(";") != -1){
+					endIndex = classType.indexOf(";") -1;
+				}else{
+					endIndex = classType.length() - 1;
+				}
+			}else{
+				startIndex = classType.lastIndexOf(" ");
+				endIndex = classType.length() - 1;
+			}
+		}
+
+		targetClassName = classType.substring(startIndex+1 , endIndex+1);
+		System.out.println(targetClassName);
+		System.out.println(className);
+		if(className.equals(targetClassName)){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
 	public ArrayList<String> getVariableInfo(){
 		ArrayList<String> variableInfo = new ArrayList<String>();
 
@@ -64,6 +117,24 @@ public class Variable {
 			return objectSet.getCurrentObject();
 		}
 		return null;
+	}
+
+	public Object getReflectObject(){
+		if(variableType == VariableType.NOT_ARRAY){
+			return oneObject.getReflectObject();
+		}else if(variableType == VariableType.ARRAY){
+			return objectSet.getReflectObject();
+		}
+		return null;
+	}
+
+	public void terminal(){
+		variableType = null;
+		variableName = null;
+		className = null;
+
+		objectSet = null;
+		oneObject = null;
 	}
 
 }

@@ -1,5 +1,5 @@
 package interpret.gui;
-import interpret.gui.util.GuiUtility;
+import interpret.util.GuiUtil;
 
 import java.awt.Container;
 import java.awt.GridBagConstraints;
@@ -26,7 +26,7 @@ public class InterpretFrame extends JFrame {
         GridBagLayout gridBagLayout = new GridBagLayout();
         setLayout(gridBagLayout);
         Container contentPane = getContentPane();
-        GuiUtility.addComponentByGridBagLayout(contentPane, gridBagLayout, objectsTabPane, 0, 0, 1, 1, 1, 1, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(0,0,0,0));
+        GuiUtil.addComponentByGridBagLayout(contentPane, gridBagLayout, objectsTabPane, 0, 0, 1, 1, 1, 1, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(0,0,0,0));
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);

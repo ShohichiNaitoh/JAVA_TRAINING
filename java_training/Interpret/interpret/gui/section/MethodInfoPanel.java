@@ -1,7 +1,8 @@
 package interpret.gui.section;
 import interpret.dispatcher.RequestDispatcher;
 import interpret.gui.section.VariableInfoPanel.VariableInfoAction;
-import interpret.gui.util.GuiUtility;
+import interpret.util.GuiUtil;
+import interpret.util.ReflectionUtil;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -88,10 +89,10 @@ public class MethodInfoPanel extends JPanel{
         methodListScrollPanel = new JScrollPane();
 		methodListScrollPanel.getViewport().setView(methodTable);
 
-        GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, searchLabel, 0, 0, 1, 1, 0.1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER, new Insets(0,15,5,5));
-        GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, searchTextField , 1, 0, 1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER, new Insets(0,-20,5,0));
-        GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, resetButton, 2, 0, 1, 1, 0.2, 0, GridBagConstraints.NONE, GridBagConstraints.CENTER, new Insets(0,0,5,-15));
-        GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, methodListScrollPanel, 0, 1, 3, 1, 1, 1, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5));
+        GuiUtil.addComponentByGridBagLayout(this, gridBagLayout, searchLabel, 0, 0, 1, 1, 0.1, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER, new Insets(0,15,5,5));
+        GuiUtil.addComponentByGridBagLayout(this, gridBagLayout, searchTextField , 1, 0, 1, 1, 1.0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER, new Insets(0,-20,5,0));
+        GuiUtil.addComponentByGridBagLayout(this, gridBagLayout, resetButton, 2, 0, 1, 1, 0.2, 0, GridBagConstraints.NONE, GridBagConstraints.CENTER, new Insets(0,0,5,-15));
+        GuiUtil.addComponentByGridBagLayout(this, gridBagLayout, methodListScrollPanel, 0, 1, 3, 1, 1, 1, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(5,5,5,5));
 
         TitledBorder titleBorder = new TitledBorder(new EtchedBorder(), sectionName);
         titleBorder.setTitleColor(Color.DARK_GRAY);
@@ -111,8 +112,8 @@ public class MethodInfoPanel extends JPanel{
 			StringBuffer sb = new StringBuffer();
 			sb.append(constructorInfo[i][2]);
 			//sb.append(GuiUtility.getSimpleName(methodInfo[i][1] + "  "));
-			sb.append(constructorInfo[i][3]);
-			sb.append(GuiUtility.adjustArgsFormat(constructorInfo[i][4]));
+			sb.append(ReflectionUtil.getSimpleName(constructorInfo[i][3]));
+			sb.append(ReflectionUtil.adjustArgsFormatBySimpleName(constructorInfo[i][4]));
 			/*
 			if(constructorInfo[i][2] != null){
 				sb.append(" ( ");
@@ -137,10 +138,10 @@ public class MethodInfoPanel extends JPanel{
 			String[] str = new String[columnNames.length];
 			str[0] = methodInfo[i][1];
 			StringBuffer sb = new StringBuffer();
-			sb.append(methodInfo[i][2] + "  ");
+			sb.append(ReflectionUtil.getSimpleName(methodInfo[i][2]) + "  ");
 			//sb.append(GuiUtility.getSimpleName(methodInfo[i][1] + "  "));
 			sb.append(methodInfo[i][3]);
-			sb.append(GuiUtility.adjustArgsFormat(methodInfo[i][4]));
+			sb.append(ReflectionUtil.adjustArgsFormatBySimpleName(methodInfo[i][4]));
 			/*
 			if(methodInfo[i][3] != null){
 				sb.append(" ( ");
@@ -181,6 +182,10 @@ public class MethodInfoPanel extends JPanel{
 		methodTable.clearSelection();
 	}
 
+	public String[] getKeywords(){
+		return searchTextField.getText().split(" ");
+	}
+
 	private void updateSearchResult(){
 		String[] keywords = searchTextField.getText().split(" ");
 		requestDispatcher.searchMethodInfoList(keywords);
@@ -218,6 +223,7 @@ public class MethodInfoPanel extends JPanel{
 		@Override
 		public void keyTyped(KeyEvent e) {
 			updateSearchResult();
+			requestDispatcher.outputReset();
 		}
 
 		@Override

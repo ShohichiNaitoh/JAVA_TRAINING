@@ -41,4 +41,8 @@ public class ObjectSet {
 	public OneObject getObjectByIndex(int index){
 		return objects.get(index);
 	}
+
+	public Object getReflectObject(){
+		return reflectObjects;
+	}
 }

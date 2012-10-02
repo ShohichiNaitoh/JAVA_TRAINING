@@ -1,6 +1,8 @@
 package interpret.logic;
 
-import interpret.gui.util.GuiUtility;
+
+import interpret.dispatcher.RequestDispatcher;
+import interpret.util.ReflectionUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -11,7 +13,7 @@ import java.lang.reflect.WildcardType;
 
 public class OneField {
 	private Field field = null;
-	public static int NUMBER_OF_INFO_ELEMENT = 5;
+	public static int NUMBER_OF_INFO_ELEMENT = 6;
 	private int id = -1;
 	private String modifier = "";
 	private String type = "";
@@ -21,8 +23,7 @@ public class OneField {
 	public OneField(int id , Object reflectObject , Field field) throws IllegalAccessException{
 		this.field = field;
 		this.id = id;
-		modifier = GuiUtility.convertModifiers(field.getModifiers());
-		Type t = field.getGenericType();
+		modifier = ReflectionUtil.convertModifiers(field.getModifiers());
 		/*
 		if(t instanceof ParameterizedType ){
 			Type[] g = ((ParameterizedType) t).getActualTypeArguments();
@@ -31,7 +32,7 @@ public class OneField {
 			}
 		}
 		*/
-		type = field.getGenericType().toString();
+		type = field.getType().toString();
 		/*
 		TypeVariable[] b = field.getType().getTypeParameters();
 		System.out.println(type);
@@ -95,6 +96,8 @@ public class OneField {
 			field.set(reflectObject, Boolean.parseBoolean(value));
 		}else if(type.equals("byte")){
 			field.set(reflectObject, Byte.parseByte(value));
+		}else if(type.equals("char")){
+			field.set(reflectObject, (char) value.charAt(0));
 		}else if(type.equals("int")){
 			field.set(reflectObject, Integer.parseInt(value));
 		}else if(type.equals("long")){
@@ -105,8 +108,13 @@ public class OneField {
 			field.set(reflectObject, Double.parseDouble(value));
 		}else if(type.equals("float")){
 			field.set(reflectObject, Float.parseFloat(value));
+		}else if(type.equals("class java.lang.String")){
+			field.set(reflectObject, value.toString());
 		}else{
-			field.set(reflectObject, value);
+			if(value.equals("null")){
+				value = null;
+			}
+			field.set(reflectObject, RequestDispatcher.getInstanceByVariableName(value));
 		}
 	}
 

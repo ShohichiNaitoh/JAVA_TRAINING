@@ -1,9 +1,9 @@
 package interpret.gui.section;
 import interpret.dispatcher.RequestDispatcher;
 import interpret.gui.InterpretFrame;
-import interpret.gui.util.GuiUtility;
 import interpret.logic.Variable;
 import interpret.logic.Variable.VariableType;
+import interpret.util.GuiUtil;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -57,7 +57,7 @@ public class UserInputPanel extends JPanel {
 	private JRadioButton arrayTypeButton = null;
 	private JComboBox sizeComboBox = null;
 
-	private static final String okButtonName = "    Execute!!    ";
+	private static final String okButtonName = "    Create Variable !!    ";
 	private JButton okButton = null;
 
 	public static final int MAX_ARRAY_SIZE = 10;
@@ -89,31 +89,31 @@ public class UserInputPanel extends JPanel {
         TitledBorder panelTitleBorder = new TitledBorder(new EtchedBorder(), variableTypeSectionName);
         panelTitleBorder.setTitleColor(Color.BLACK);
         variableTypePanel.setBorder(panelTitleBorder);
-        GuiUtility.addComponentByGridBagLayout(variableTypePanel, variablePanelLayout, notArrayTypeButton, 0, 0, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER, new Insets(0,10,10,15));
-        GuiUtility.addComponentByGridBagLayout(variableTypePanel, variablePanelLayout, arrayTypeButton, 1, 0, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER, new Insets(0,0,10,5));
-        GuiUtility.addComponentByGridBagLayout(variableTypePanel, variablePanelLayout, sizeComboBox, 2, 0, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER, new Insets(0,0,10,15));
+        GuiUtil.addComponentByGridBagLayout(variableTypePanel, variablePanelLayout, notArrayTypeButton, 0, 0, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER, new Insets(0,10,10,15));
+        GuiUtil.addComponentByGridBagLayout(variableTypePanel, variablePanelLayout, arrayTypeButton, 1, 0, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER, new Insets(0,0,10,5));
+        GuiUtil.addComponentByGridBagLayout(variableTypePanel, variablePanelLayout, sizeComboBox, 2, 0, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER, new Insets(0,0,10,15));
 
         notArrayTypeButton.addActionListener(new UserInputAction());
         arrayTypeButton.addActionListener(new UserInputAction());
 
         variableInputLabel = new JLabel(variabInputLabelName);
-        variableInputField = new JTextField("a");
+        variableInputField = new JTextField();
         variableInputField.addKeyListener(new UserInputAction());
 		classNameInputLabel = new JLabel(classInputLabelName);
-		classNameInputField = new JTextField("java.awt.Frame");
+		classNameInputField = new JTextField();
 		classNameInputField.addKeyListener(new UserInputAction());
 
-		GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, variableTypePanel, 0, 0, 1, 2, 0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER , new Insets(-10,30,0,10));
+		GuiUtil.addComponentByGridBagLayout(this, gridBagLayout, variableTypePanel, 0, 0, 1, 2, 0, 0, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER , new Insets(-10,30,0,10));
 
-        GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, variableInputLabel, 1, 0, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER , new Insets(0,15,0,15));
-        GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, variableInputField, 1, 1, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH , new Insets(0,15,0,15));
-        GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, classNameInputLabel, 2, 0, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER , new Insets(0,15,0,30));
-        GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, classNameInputField, 2, 1, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH , new Insets(0,15,0,30));
+        GuiUtil.addComponentByGridBagLayout(this, gridBagLayout, variableInputLabel, 1, 0, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER , new Insets(0,15,0,15));
+        GuiUtil.addComponentByGridBagLayout(this, gridBagLayout, variableInputField, 1, 1, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH , new Insets(0,15,0,15));
+        GuiUtil.addComponentByGridBagLayout(this, gridBagLayout, classNameInputLabel, 2, 0, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.CENTER , new Insets(0,15,0,30));
+        GuiUtil.addComponentByGridBagLayout(this, gridBagLayout, classNameInputField, 2, 1, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.NORTH , new Insets(0,15,0,30));
 
         okButton = new JButton(okButtonName);
         okButton.addActionListener(new UserInputAction());
 
-        GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, okButton, 2, 2, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.CENTER , new Insets(-10,0,10,0));
+        GuiUtil.addComponentByGridBagLayout(this, gridBagLayout, okButton, 2, 2, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.CENTER , new Insets(-10,0,10,0));
 
         TitledBorder titleBorder = new TitledBorder(new EtchedBorder(), sectionName);
         titleBorder.setTitleColor(Color.BLUE);

@@ -1,6 +1,6 @@
 package interpret.gui.section;
 import interpret.dispatcher.RequestDispatcher;
-import interpret.gui.util.GuiUtility;
+import interpret.util.GuiUtil;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -46,7 +46,7 @@ public class ResultOutputPanel extends JPanel{
 		scrollPanel = new JScrollPane(outputTextPane);
 		scrollPanel.setPreferredSize(new Dimension(500, 150));
 
-        GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, scrollPanel, 0, 0, 1, 1, 1, 1, GridBagConstraints.BOTH, GridBagConstraints.CENTER , new Insets(0,5,5,5));
+        GuiUtil.addComponentByGridBagLayout(this, gridBagLayout, scrollPanel, 0, 0, 1, 1, 1, 1, GridBagConstraints.BOTH, GridBagConstraints.CENTER , new Insets(0,5,5,5));
 
         TitledBorder titleBorder = new TitledBorder(new EtchedBorder(), sectionName);
         titleBorder.setTitleColor(Color.RED);

@@ -9,6 +9,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 
@@ -22,6 +23,7 @@ public class OneObject {
 	private TreeMap<String,OneMethod> methodMap = new TreeMap<String,OneMethod>();
 	private int selectedFieldId = -1;
 	private int selectedMethodId = -1;
+	private String calledConstructorName = null;
 
 	private int memberId = 0;
 
@@ -160,7 +162,7 @@ public class OneObject {
 		if(reflectObject == null){
 			return "null";
 		}else{
-			return "";
+			return calledConstructorName;
 		}
 	}
 
@@ -188,16 +190,57 @@ public class OneObject {
 	}
 
 	public void rewriteSelectedField(String value) throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException{
-		fieldMap.get(selectedFieldId).rewriteValue(reflectObject , value);
+		for(Map.Entry<String, OneField> e : fieldMap.entrySet()){
+			if(e.getValue().getId() == selectedFieldId){
+				e.getValue().rewriteValue(reflectObject , value);
+			}
+		}
 		if(reflectObject == null){
 			listupStaticFields();
+			listupStaticMethods();
 		}else{
 			listupAllFields();
+			listupAllMethods();
 		}
 	}
 
-	public Object executeSelectedMethod() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException{
-		return methodMap.get(selectedMethodId).execute(reflectObject);
+	public Object executeSelectedMethod(String[] argsValue) throws Throwable{
+		if(selectedMethodId < constructorMap.size()){
+			for(Entry<String, OneConstructor> e : constructorMap.entrySet()){
+				if(e.getValue().getId() == selectedMethodId){
+					reflectObject = e.getValue().execute(reflectObject , argsValue);
+					if(reflectObject == null){
+						listupStaticFields();
+						listupStaticMethods();
+					}else{
+						listupAllFields();
+						listupAllMethods();
+						calledConstructorName = e.getValue().getName();
+						return "Instance created.";
+					}
+				}
+			}
+		}else{
+			for(Entry<String, OneMethod> e : methodMap.entrySet()){
+				if(e.getValue().getId() == selectedMethodId){
+					Object returnObj = e.getValue().execute(reflectObject , argsValue);
+					if(reflectObject == null){
+						listupStaticFields();
+						listupStaticMethods();
+					}else{
+						listupAllFields();
+						listupAllMethods();
+					}
+					return returnObj;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	public Object getReflectObject(){
+		return reflectObject;
 	}
 
 	private void listupConstructors() throws IllegalAccessException{
@@ -228,38 +271,43 @@ public class OneObject {
 
 	private void listupStaticFields() throws IllegalAccessException{
 		fieldMap.clear();
-		listupFieldsRecursive(classFor , true);
+		listupFieldsRecursive(classFor , true , true);
 	}
 
 	private void listupStaticMethods() throws IllegalAccessException{
 		methodMap.clear();
-		listupMethodsRecursive(classFor , true);
+		listupMethodsRecursive(classFor , true , true);
 	}
 
 	private void listupAllFields() throws IllegalAccessException{
 		fieldMap.clear();
-		listupFieldsRecursive(classFor , false);
+		listupFieldsRecursive(classFor , false , true);
 	}
 
 	private void listupAllMethods() throws IllegalAccessException{
 		methodMap.clear();
-		listupMethodsRecursive(classFor , false);
+		listupMethodsRecursive(classFor , false , true);
 	}
 
-	private void listupFieldsRecursive(Type type , boolean restrictStaticField) throws IllegalAccessException{
+	private void listupFieldsRecursive(Type type , boolean restrictStaticField , boolean firstFlag) throws IllegalAccessException{
 		Class<?> cls = null;
 		if(type instanceof Class<?>){
 			cls = (Class<?>) type;
-			Field[] declaredFields = cls.getDeclaredFields();
-			for(Field field : declaredFields){
+			Field[] fields = null;
+			if(firstFlag){
+				fields = cls.getDeclaredFields();
+			}else{
+				fields = cls.getFields();
+			}
+			for(Field field : fields){
 				OneField oneField = new OneField(memberId++ , reflectObject, field);
 				if(restrictStaticField){
 					if(!oneField.isStatic()){
 						continue;
 					}
 				}
-				if(fieldMap.get(oneField.getName()) == null){
-					fieldMap.put(oneField.getName() , oneField);
+				if(fieldMap.get(oneField.getName().toLowerCase()) == null){
+					fieldMap.put(oneField.getName().toLowerCase() , oneField);
 				}
 			}
 
@@ -267,16 +315,21 @@ public class OneObject {
 			if(superType == null){
 				return;
 			}
-			listupFieldsRecursive(superType , restrictStaticField);
+			listupFieldsRecursive(superType , restrictStaticField , false);
 		}
 	}
 
-	private void listupMethodsRecursive(Type type , boolean restrictStaticMethod) throws IllegalAccessException{
+	private void listupMethodsRecursive(Type type , boolean restrictStaticMethod , boolean firstFlag) throws IllegalAccessException{
 		Class<?> cls = null;
 		if(type instanceof Class<?>){
 			cls = (Class<?>) type;
-			Method[] declaredMethods = cls.getDeclaredMethods();
-			for(Method method : declaredMethods){
+			Method[] methods = null;
+			if(firstFlag){
+				methods = cls.getDeclaredMethods();
+			}else{
+				methods = cls.getMethods();
+			}
+			for(Method method : methods){
 				OneMethod oneMethod = new OneMethod(memberId++ , method);
 				if(restrictStaticMethod){
 					if(!oneMethod.isStatic()){
@@ -292,7 +345,7 @@ public class OneObject {
 			if(superType == null){
 				return;
 			}
-			listupMethodsRecursive(superType , restrictStaticMethod);
+			listupMethodsRecursive(superType , restrictStaticMethod , false);
 		}
 	}
 

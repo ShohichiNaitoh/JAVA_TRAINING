@@ -2,7 +2,7 @@ package interpret.gui.section;
 
 import interpret.dispatcher.RequestDispatcher;
 import interpret.gui.InterpretFrame;
-import interpret.gui.util.GuiUtility;
+import interpret.util.GuiUtil;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -50,11 +50,21 @@ public class VariableInfoPanel extends JPanel{
 		variableListScrollPanel = new JScrollPane();
 		variableListScrollPanel.getViewport().setView(variableList);
 
-		GuiUtility.addComponentByGridBagLayout(this, gridBagLayout, variableListScrollPanel, 0, 0, 1, 1, 1, 1, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(0,5,5,5));
+		GuiUtil.addComponentByGridBagLayout(this, gridBagLayout, variableListScrollPanel, 0, 0, 1, 1, 1, 1, GridBagConstraints.BOTH, GridBagConstraints.CENTER, new Insets(0,5,5,5));
 
         TitledBorder titleBorder = new TitledBorder(new EtchedBorder(), sectionName);
         titleBorder.setTitleColor(Color.DARK_GRAY);
         setBorder(titleBorder);
+	}
+
+	public void updateVariableInfo(ArrayList<String> variableInfo){
+		int selectedIndex = variableList.getSelectedIndex();
+		defaultListMode.clear();
+		for(int i=0 ; i<variableInfo.size() ; i++){
+			defaultListMode.addElement(variableInfo.get(i));
+		}
+		variableList.setModel(defaultListMode);
+		variableList.setSelectedIndex(selectedIndex);
 	}
 
 	public void updateVariableInfo(ArrayList<String> variableInfo , int defaultSelect){
