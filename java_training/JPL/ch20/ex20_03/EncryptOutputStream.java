@@ -14,14 +14,11 @@ public class EncryptOutputStream extends FilterOutputStream {
 
 	@Override
 	public void write(int b) throws IOException {
-		super.write(decrypt(b));
+		super.write(encrypt(b));
 	}
 
-	public void write(byte[] buf , int offset , int count){
 
-	}
-
-	private int decrypt(int c){
+	private int encrypt(int c){
 		return c - ADD_CONSTANT;
 	}
 }

@@ -18,15 +18,6 @@ public class DecryptInputStream extends FilterInputStream {
 		return (c == -1 ? c : decrypt(c));
 	}
 
-	public int read(byte[] buf , int offset , int count) throws IOException{
-		int nread = super.read(buf , offset , count);
-		int last = offset + nread;
-		for(int i=offset ; i<last ; i++){
-			buf[i] = (byte) decrypt(buf[i]);
-		}
-		return nread;
-	}
-
 	private int decrypt(int c){
 		return c - SUBTRACT_CONSTANT;
 	}

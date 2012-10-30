@@ -1,0 +1,6 @@
+testA = 5
+testB + 6
+testC - 5
+testA - 2
+testB = -3
+testC + 10

@@ -1,8 +1,5 @@
-package interpret.gui.section.dialog;
+package ch16.ex16_09.Interpret.interpret.gui.section.dialog;
 
-import interpret.dispatcher.RequestDispatcher;
-import interpret.util.GuiUtil;
-import interpret.util.ReflectionUtil;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -49,6 +46,10 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
+
+import ch16.ex16_09.Interpret.interpret.dispatcher.RequestDispatcher;
+import ch16.ex16_09.Interpret.interpret.util.GuiUtil;
+import ch16.ex16_09.Interpret.interpret.util.ReflectionUtil;
 
 public class MethodOperationDialog extends JDialog{
 	private static final long serialVersionUID = 1L;
