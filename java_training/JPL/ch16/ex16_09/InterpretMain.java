@@ -1,4 +1,4 @@
-package ch16.ex16_09.Interpret.interpret;
+package ch16.ex16_09;
 
 import ch16.ex16_09.Interpret.interpret.gui.InterpretFrame;
 
