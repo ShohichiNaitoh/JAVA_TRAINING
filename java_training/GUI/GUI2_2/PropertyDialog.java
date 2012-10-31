@@ -1,5 +1,6 @@
 package GUI2_2;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -17,6 +18,8 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 
 
 public class PropertyDialog extends JDialog {
@@ -44,6 +47,9 @@ public class PropertyDialog extends JDialog {
 	JComboBox backColorChoice = new JComboBox();
 	JComboBox blinkChoice = new JComboBox();
 
+	JLabel chipColorLiteral = new JLabel("　　　");
+	JLabel chipColorBack = new JLabel("　　　");
+
 	JButton okButton = null;
 	JButton cancelButton = null;
 
@@ -61,7 +67,7 @@ public class PropertyDialog extends JDialog {
 		this.selectedDoBlink = doBlink;
 
 		dim = tk.getScreenSize();
-		setSize(dim.width*1/4 , dim.height*2/5);
+		setSize(dim.width*1/3 , dim.height*2/5);
 		int x = (int)(owner.getLocation().getX()+owner.getWidth()/5);
 		int y = (int)(owner.getLocation().getY()+owner.getHeight()*4/5);
 		if(x < 0){
@@ -88,7 +94,7 @@ public class PropertyDialog extends JDialog {
         JLabel fontLabel = new JLabel(FONT_LABEL);
         fontLabel.setHorizontalAlignment(JLabel.RIGHT);
 	    GuiUtil.addComponentByGridBagLayout(this, layout, fontLabel, 0, 0, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.EAST, new Insets(0,0,0,10));
-	    GuiUtil.addComponentByGridBagLayout(this, layout, fontChoice, 2, 0, 2, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0,0,0,10));
+	    GuiUtil.addComponentByGridBagLayout(this, layout, fontChoice, 3, 0, 2, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0,0,0,10));
 	    fontChoice.addItemListener(new DialogAction());
 
         int[] fontSizeSet = this.selectedMyTimeFormat.getFontSizeSet();
@@ -99,7 +105,7 @@ public class PropertyDialog extends JDialog {
         JLabel fontSizeLabel = new JLabel(FONT_SIZE_LABEL);
         fontSizeLabel.setHorizontalAlignment(JLabel.RIGHT);
 	    GuiUtil.addComponentByGridBagLayout(this, layout, fontSizeLabel, 0, 1, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.EAST, new Insets(0,0,0,10));
-	    GuiUtil.addComponentByGridBagLayout(this, layout, fontSizeChoice, 2, 1, 2, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0,0,0,10));
+	    GuiUtil.addComponentByGridBagLayout(this, layout, fontSizeChoice, 3, 1, 2, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0,0,0,10));
 	    fontSizeChoice.addItemListener(new DialogAction());
 
         String[] fontColorNameSet = this.selectedMyTimeFormat.getLiteralColorSetWithString();
@@ -108,9 +114,13 @@ public class PropertyDialog extends JDialog {
 	    }
         literalColorChoice.setSelectedItem(selectedMyTimeFormat.getCurrentLiteralColorWithString());
         JLabel literalColorLabel = new JLabel(LITERAL_COLOR_LABEL);
+        chipColorLiteral.setBackground(selectedMyTimeFormat.getCurrentLiteralColor());
+        chipColorLiteral.setBorder(new LineBorder(Color.BLACK));
+        chipColorLiteral.setOpaque(true);
         literalColorLabel.setHorizontalAlignment(JLabel.RIGHT);
 	    GuiUtil.addComponentByGridBagLayout(this, layout, literalColorLabel, 0, 2, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.EAST, new Insets(0,0,0,10));
-	    GuiUtil.addComponentByGridBagLayout(this, layout, literalColorChoice, 2, 2, 2, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0,0,0,10));
+	    GuiUtil.addComponentByGridBagLayout(this, layout, chipColorLiteral, 6, 2, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST, new Insets(0,0,0,10));
+	    GuiUtil.addComponentByGridBagLayout(this, layout, literalColorChoice, 3, 2, 2, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0,0,0,10));
 	    literalColorChoice.addItemListener(new DialogAction());
 
         String[] backColorNameSet = this.selectedMyBackCampus.getBackColorSetWithString();
@@ -119,9 +129,13 @@ public class PropertyDialog extends JDialog {
 	    }
         backColorChoice.setSelectedItem(selectedMyBackCampus.getCurrentBackColorWithString());
         JLabel backColorLabel = new JLabel(BACK_COLOR_LABEL);
+        chipColorBack.setBackground((selectedMyBackCampus.getCurrentBackColor()));
+        chipColorBack.setBorder(new LineBorder(Color.BLACK));
+        chipColorBack.setOpaque(true);
         backColorLabel.setHorizontalAlignment(JLabel.RIGHT);
 	    GuiUtil.addComponentByGridBagLayout(this, layout, backColorLabel, 0, 3, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.EAST, new Insets(0,0,0,10));
-	    GuiUtil.addComponentByGridBagLayout(this, layout, backColorChoice, 2, 3, 2, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0,0,0,10));
+	    GuiUtil.addComponentByGridBagLayout(this, layout, chipColorBack, 6, 3, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.WEST, new Insets(0,0,0,10));
+	    GuiUtil.addComponentByGridBagLayout(this, layout, backColorChoice, 3, 3, 2, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0,0,0,10));
 	    backColorChoice.addItemListener(new DialogAction());
 
 	    blinkChoice.addItem("ON");
@@ -134,16 +148,16 @@ public class PropertyDialog extends JDialog {
 	    JLabel blinkLabel = new JLabel(BLINK_LABEL);
 	    blinkLabel.setHorizontalAlignment(JLabel.RIGHT);
 	    GuiUtil.addComponentByGridBagLayout(this, layout, blinkLabel, 0, 4, 1, 1, 1, 1, GridBagConstraints.NONE, GridBagConstraints.EAST, new Insets(0,0,0,10));
-	    GuiUtil.addComponentByGridBagLayout(this, layout, blinkChoice, 2, 4, 2, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0,0,0,10));
+	    GuiUtil.addComponentByGridBagLayout(this, layout, blinkChoice, 3, 4, 2, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.WEST, new Insets(0,0,0,10));
 	    blinkChoice.addItemListener(new DialogAction());
 
 	    okButton = new JButton("    OK    ");
         okButton.addActionListener(new DialogAction());
-	    GuiUtil.addComponentByGridBagLayout(this, layout, okButton, 2, 5, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST, new Insets(0,10,0,5));
+	    GuiUtil.addComponentByGridBagLayout(this, layout, okButton, 3, 5, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST, new Insets(0,10,0,5));
 
         cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(new DialogAction());
-	    GuiUtil.addComponentByGridBagLayout(this, layout, cancelButton, 3, 5, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST, new Insets(0,5,0,10));
+	    GuiUtil.addComponentByGridBagLayout(this, layout, cancelButton, 4, 5, 1, 1, 1, 1, GridBagConstraints.HORIZONTAL, GridBagConstraints.EAST, new Insets(0,5,0,10));
 	}
 
 	synchronized public boolean getDoBlink(){
@@ -182,8 +196,10 @@ public class PropertyDialog extends JDialog {
 				selectedMyTimeFormat.setCurrentFontSize(Integer.parseInt((String) e.getItem()));
 			}else if(e.getSource() == literalColorChoice){
 				selectedMyTimeFormat.setCurrentLiteralColorWithString((String)e.getItem());
+		        chipColorLiteral.setBackground(selectedMyTimeFormat.getCurrentLiteralColor());
 			}else if(e.getSource() == backColorChoice){
 				selectedMyBackCampus.setCurrentBackColorWithString((String)e.getItem());
+		        chipColorBack.setBackground(selectedMyBackCampus.getCurrentBackColor());
 			}else if(e.getSource() == blinkChoice){
 				if( ((String)e.getItem()).equals("ON")){
 					selectedDoBlink = true;
