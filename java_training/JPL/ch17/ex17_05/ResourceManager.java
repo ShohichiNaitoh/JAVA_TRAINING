@@ -1,4 +1,4 @@
-package ch17.ex17_04;
+package ch17.ex17_05;
 
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
@@ -71,7 +71,7 @@ public final class ResourceManager {
 						ref.clear();
 						ref = queue.poll();
 					}
-					return;
+					break;
 				}
 			}
 		}
